@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Package xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_uFuMYK0rEd6ATpMxLtNYvw" name="default">
+  <elementImport xmi:id="_uOMy8K0rEd6ATpMxLtNYvw">
+    <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+  </elementImport>
+  <elementImport xmi:id="_uOft4K0rEd6ATpMxLtNYvw">
+    <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+  </elementImport>
+  <elementImport xmi:id="_uOft4a0rEd6ATpMxLtNYvw">
+    <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#UnlimitedNatural"/>
+  </elementImport>
+  <elementImport xmi:id="_uOft4q0rEd6ATpMxLtNYvw">
+    <importedElement xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+  </elementImport>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_FD5YUK0sEd6ATpMxLtNYvw" name="ILauncher"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_GfGLAK0sEd6ATpMxLtNYvw" name="ICommand">
+    <ownedOperation xmi:id="_I5g_AK0sEd6ATpMxLtNYvw" name="getFile">
+      <ownedParameter xmi:id="_3ey_IK0sEd6ATpMxLtNYvw" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_Miyy0K0sEd6ATpMxLtNYvw" name="getParameters">
+      <ownedParameter xmi:id="_ETR-QK0tEd6ATpMxLtNYvw" direction="return"/>
+    </ownedOperation>
+  </packagedElement>
+</uml:Package>
