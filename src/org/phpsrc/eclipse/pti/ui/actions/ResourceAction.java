@@ -122,7 +122,11 @@ public abstract class ResourceAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private void addResourceToList(ArrayList<IResource> list, IResource resource) {
-		if (resource != null && resource.exists() && !list.contains(resource))
+		if (resource != null && resource.exists() && !list.contains(resource) && canAddResourceToList(resource))
 			list.add(resource);
+	}
+	
+	protected boolean canAddResourceToList(IResource resource) {
+		return true;
 	}
 }
