@@ -246,6 +246,7 @@ public class PHPToolkitUtil {
 	}
 
 	public static IMethod getClassMethod(ISourceModule module, String methodName) {
+		Assert.isNotNull(module);
 		Assert.isNotNull(methodName);
 		try {
 			IType newClass = module.getAllTypes()[0];
@@ -255,7 +256,72 @@ public class PHPToolkitUtil {
 				}
 			}
 		} catch (ModelException e) {
-			e.printStackTrace();
+			Logger.logException(e);
+		}
+
+		return null;
+	}
+
+	/**
+	 * @since 1.4.0
+	 */
+	public static IMethod getClassMethod(ISourceModule module, String className, String methodName) {
+		Assert.isNotNull(module);
+		Assert.isNotNull(className);
+		Assert.isNotNull(methodName);
+		try {
+			for (IType newClass : module.getAllTypes()) {
+				if (newClass.getElementName().equals(className)) {
+					for (IMethod method : newClass.getMethods()) {
+						if (method.getElementName().equals(methodName)) {
+							return method;
+						}
+					}
+				}
+			}
+		} catch (ModelException e) {
+			Logger.logException(e);
+		}
+
+		return null;
+	}
+
+	/**
+	 * @since 1.4.0
+	 */
+	public static IType getClassType(ISourceModule module, String className) {
+		Assert.isNotNull(module);
+		Assert.isNotNull(className);
+		try {
+			for (IType newClass : module.getAllTypes()) {
+				if (newClass.getElementName().equals(className)) {
+					return newClass;
+				}
+			}
+		} catch (ModelException e) {
+			Logger.logException(e);
+		}
+
+		return null;
+	}
+
+	/**
+	 * @since 1.4.0
+	 */
+	public static IMethod getFunction(ISourceModule module, String functionName) {
+		Assert.isNotNull(module);
+		Assert.isNotNull(functionName);
+		try {
+			for (IModelElement child : module.getChildren()) {
+				if (child.getElementType() == IModelElement.METHOD && child.getElementName().equals(functionName)) {
+					if (child instanceof IMethod)
+						return (IMethod) child;
+					else
+						return null;
+				}
+			}
+		} catch (ModelException e) {
+			Logger.logException(e);
 		}
 
 		return null;
