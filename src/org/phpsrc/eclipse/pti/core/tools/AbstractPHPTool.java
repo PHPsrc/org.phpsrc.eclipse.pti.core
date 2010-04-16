@@ -43,6 +43,16 @@ public abstract class AbstractPHPTool {
 		return null;
 	}
 
+	protected PHPexeItem getDefaultPhpExecutable() {
+		PHPexeItem defaultPhpExec = null;
+		for (PHPexeItem phpExec : PHPexes.getInstance().getAllItems()) {
+			if (phpExec.isDefault()) {
+				defaultPhpExec = phpExec;
+			}
+		}
+		return defaultPhpExec;
+	}
+
 	protected File createTempDir(String name) {
 		File tempDir = new File(System.getProperty("java.io.tmpdir"), name); //$NON-NLS-2$
 		if (!tempDir.exists()) {
