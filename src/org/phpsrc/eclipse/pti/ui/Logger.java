@@ -22,7 +22,7 @@ import org.phpsrc.eclipse.pti.core.PHPToolCorePlugin;
 public class Logger {
 	private static final String PLUGIN_ID = PHPToolCorePlugin.PLUGIN_ID; //$NON-NLS-1$
 
-	private static final String CONSOLE_NAME = "PHP Tool Output";
+	private static final String CONSOLE_NAME = "PHP Tools Output";
 
 	public static final int OK = IStatus.OK; // 0
 	public static final int INFO = IStatus.INFO; // 1
@@ -57,8 +57,9 @@ public class Logger {
 			Platform.getLog(bundle).log(statusObj);
 	}
 
-	protected static void _logToConsole(String output) {
-		MessageConsole myConsole = findConsole(CONSOLE_NAME);
+	protected static void _logToConsole(String output, boolean toTop) {
+		MessageConsole myConsole = findConsole(CONSOLE_NAME, toTop);
+
 		MessageConsoleStream out = myConsole.newMessageStream();
 		out.println(output);
 	}
@@ -92,19 +93,36 @@ public class Logger {
 	}
 
 	public static void logToConsole(String message) {
-		_logToConsole(message);
+		logToConsole(message, false);
 	}
 
-	private static MessageConsole findConsole(String name) {
+	public static void logToConsole(String message, boolean toTop) {
+		_logToConsole(message, toTop);
+	}
+
+	private static MessageConsole findConsole(String name, boolean toTop) {
 		ConsolePlugin plugin = ConsolePlugin.getDefault();
 		IConsoleManager conMan = plugin.getConsoleManager();
 		IConsole[] existing = conMan.getConsoles();
-		for (int i = 0; i < existing.length; i++)
-			if (name.equals(existing[i].getName()))
-				return (MessageConsole) existing[i];
-		// no console found, so create a new one
-		MessageConsole myConsole = new MessageConsole(name, null);
-		conMan.addConsoles(new IConsole[] { myConsole });
+
+		MessageConsole myConsole = null;
+		for (int i = 0; i < existing.length; i++) {
+			if (name.equals(existing[i].getName())) {
+				myConsole = (MessageConsole) existing[i];
+				break;
+			}
+		}
+
+		if (myConsole == null) {
+			// no console found, so create a new one
+			myConsole = new MessageConsole(name, PHPToolCorePlugin.getDefault().getImageRegistry().getDescriptor(
+					PHPToolCorePlugin.IMG_PHPSRC));
+			conMan.addConsoles(new IConsole[] { myConsole });
+		}
+
+		if (toTop)
+			conMan.showConsoleView(myConsole);
+
 		return myConsole;
 	}
 }

@@ -13,9 +13,6 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,6 +40,7 @@ import org.eclipse.swt.widgets.Display;
 import org.phpsrc.eclipse.pti.core.PHPToolCorePlugin;
 import org.phpsrc.eclipse.pti.core.listener.IOutputListener;
 
+@SuppressWarnings("restriction")
 public class PHPToolExecutableLauncher {
 	protected ListenerList outputListenerList = new ListenerList();
 
@@ -63,14 +61,6 @@ public class PHPToolExecutableLauncher {
 		String phpExeString = configuration.getAttribute(IPHPDebugConstants.ATTR_EXECUTABLE_LOCATION, (String) null);
 		String phpIniPath = configuration.getAttribute(IPHPDebugConstants.ATTR_INI_LOCATION, (String) null);
 		String fileName = configuration.getAttribute(IPHPDebugConstants.ATTR_FILE_FULL_PATH, (String) null);
-		IProject project = null;
-		String file = configuration.getAttribute(IPHPDebugConstants.ATTR_FILE, (String) null);
-		if (file != null) {
-			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(file);
-			if (resource != null) {
-				project = resource.getProject();
-			}
-		}
 
 		if (monitor.isCanceled()) {
 			return null;
@@ -168,15 +158,7 @@ public class PHPToolExecutableLauncher {
 		}
 		process.setAttribute(IProcess.ATTR_CMDLINE, fileName);
 
-		if (CommonTab.isLaunchInBackground(configuration)) {
-			// refresh resources after process finishes
-			/*
-			 * if (RefreshTab.getRefreshScope(configuration) != null) {
-			 * BackgroundResourceRefresher refresher = new
-			 * BackgroundResourceRefresher(configuration, process);
-			 * refresher.startBackgroundRefresh(); }
-			 */
-		} else {
+		if (!CommonTab.isLaunchInBackground(configuration)) {
 			// wait for process to exit
 			while (!process.isTerminated()) {
 				try {
@@ -188,12 +170,6 @@ public class PHPToolExecutableLauncher {
 				} catch (InterruptedException e) {
 				}
 			}
-
-			// if (process.getExitValue() > 1) {
-			// throw new CoreException(new Status(IStatus.ERROR,
-			// PHPToolCorePlugin.PLUGIN_ID, process
-			// .getStreamsProxy().getOutputStreamMonitor().getContents()));
-			// }
 
 			// refresh resources
 			subMonitor = new SubProgressMonitor(monitor, 10); // 10+80+10 of

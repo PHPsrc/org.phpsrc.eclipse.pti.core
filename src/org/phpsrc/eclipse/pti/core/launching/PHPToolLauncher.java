@@ -46,6 +46,7 @@ import org.phpsrc.eclipse.pti.core.php.inifile.INIFileEntry;
 import org.phpsrc.eclipse.pti.core.php.inifile.INIFileModifier;
 import org.phpsrc.eclipse.pti.ui.Logger;
 
+@SuppressWarnings("restriction")
 public class PHPToolLauncher {
 
 	public final static String COMMANDLINE_PLACEHOLDER_FILE = "%file%"; //$NON-NLS-1$
@@ -139,7 +140,7 @@ public class PHPToolLauncher {
 				if (printOutput) {
 					php.addOutputListener(new IOutputListener() {
 						public void handleOutput(String output) {
-							Logger.logToConsole(output);
+							Logger.logToConsole(output, true);
 						}
 					});
 				}
@@ -149,7 +150,7 @@ public class PHPToolLauncher {
 				String output = proxy.getOutputStreamMonitor().getContents();
 
 				if (printOutput)
-					Logger.logToConsole(output);
+					Logger.logToConsole(output, true);
 
 				return output;
 			} else {
