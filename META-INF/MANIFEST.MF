@@ -38,5 +38,6 @@ Export-Package: org.phpsrc.eclipse.pti.core,
  org.phpsrc.eclipse.pti.ui.preferences,
  org.phpsrc.eclipse.pti.ui.preferences.dialogfields,
  org.phpsrc.eclipse.pti.ui.viewsupport,
+ org.phpsrc.eclipse.pti.ui.widgets,
  org.phpsrc.eclipse.pti.ui.widgets.listener,
  org.phpsrc.eclipse.pti.ui.wizards.fields
