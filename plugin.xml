@@ -45,7 +45,7 @@
 			<menu
 				id="org.phpsrc.eclipse.pti.ui.menus.phptools"
 				label="PHP Tools"
-				icon="icons/obj16/phpsrc.gif">
+				icon="icons/full/obj16/phpsrc.gif">
 			</menu>
 		</menuContribution>
 	</extension>

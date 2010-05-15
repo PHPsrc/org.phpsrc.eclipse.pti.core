@@ -28,6 +28,10 @@ public class PHPToolCorePlugin extends AbstractPHPToolPlugin {
 	public static final String IMG_ACTIVITY = "IMG_ACTIVITY";
 	public static final String IMG_OVERLAY_ERROR = "IMG_OVERLAY_ERROR";
 	public static final String IMG_OVERLAY_WARNING = "IMG_OVERLAY_WARNING";
+	public static final String IMG_IMAGE_FIT = "IMG_IMAGE_FIT";
+	public static final String IMG_IMAGE_ORIGINAL = "IMG_IMAGE_ORIGINAL";
+	public static final String IMG_IMAGE_ZOOM_IN = "IMG_IMAGE_ZOOM_IN";
+	public static final String IMG_IMAGE_ZOOM_OUT = "IMG_IMAGE_ZOOM_OUT";
 
 	// The shared instance
 	private static PHPToolCorePlugin plugin;
@@ -52,12 +56,22 @@ public class PHPToolCorePlugin extends AbstractPHPToolPlugin {
 	}
 
 	protected void initializeImageRegistry(ImageRegistry registry) {
-		registry.put(IMG_PHPSRC, ImageDescriptor.createFromURL(resolvePluginResourceURL("icons/obj16/phpsrc.gif")));
-		registry.put(IMG_ACTIVITY, ImageDescriptor.createFromURL(resolvePluginResourceURL("icons/obj16/activity.gif")));
+		registry
+				.put(IMG_PHPSRC, ImageDescriptor.createFromURL(resolvePluginResourceURL("icons/full/obj16/phpsrc.gif")));
+		registry.put(IMG_ACTIVITY, ImageDescriptor
+				.createFromURL(resolvePluginResourceURL("icons/full/obj16/activity.gif")));
 		registry.put(IMG_OVERLAY_ERROR, ImageDescriptor
-				.createFromURL(resolvePluginResourceURL("icons/ovr16/error_co.gif")));
+				.createFromURL(resolvePluginResourceURL("icons/full/ovr16/error_co.gif")));
 		registry.put(IMG_OVERLAY_WARNING, ImageDescriptor
-				.createFromURL(resolvePluginResourceURL("icons/ovr16/warning_co.gif")));
+				.createFromURL(resolvePluginResourceURL("icons/full/ovr16/warning_co.gif")));
+		registry.put(IMG_IMAGE_FIT, ImageDescriptor
+				.createFromURL(resolvePluginResourceURL("icons/full/elcl16/image_fit.gif")));
+		registry.put(IMG_IMAGE_ORIGINAL, ImageDescriptor
+				.createFromURL(resolvePluginResourceURL("icons/full/elcl16/image_original.gif")));
+		registry.put(IMG_IMAGE_ZOOM_IN, ImageDescriptor
+				.createFromURL(resolvePluginResourceURL("icons/full/elcl16/image_zoomin.gif")));
+		registry.put(IMG_IMAGE_ZOOM_OUT, ImageDescriptor
+				.createFromURL(resolvePluginResourceURL("icons/full/elcl16/image_zoomout.gif")));
 	}
 
 	/*
