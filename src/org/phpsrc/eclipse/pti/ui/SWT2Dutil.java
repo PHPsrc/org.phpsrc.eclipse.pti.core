@@ -96,7 +96,7 @@ public class SWT2Dutil {
 			Point2D dest = af.inverseTransform(src, null);
 			return new Point((int) Math.floor(dest.getX()), (int) Math.floor(dest.getY()));
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.logException(e);
 			return new Point(0, 0);
 		}
 	}

@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.phpsrc.eclipse.pti.ui.SWT2Dutil;
 
@@ -60,11 +61,10 @@ public class ImageCanvas extends Canvas {
 	 *            the style of this control.
 	 */
 	public ImageCanvas(final Composite parent, int style) {
-		super(parent, style | SWT.BORDER | SWT.NO_BACKGROUND);
+		super(parent, style | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.NO_BACKGROUND);
 		addControlListener(new ControlAdapter() { /* resize listener. */
 			public void controlResized(ControlEvent event) {
-				// syncScrollBars();
-				fitCanvas();
+				syncScrollBars();
 			}
 		});
 		addPaintListener(new PaintListener() { /* paint listener. */
@@ -168,7 +168,7 @@ public class ImageCanvas extends Canvas {
 	 * 
 	 * @return sourceImage.
 	 */
-	public Image getImage() {
+	public Image getSourceImage() {
 		return sourceImage;
 	}
 
@@ -177,7 +177,7 @@ public class ImageCanvas extends Canvas {
 	 * range, it will correct it. This function considers only following factors
 	 * :<b> transform, image size, client area</b>.
 	 */
-	private void syncScrollBars() {
+	public void syncScrollBars() {
 		if (sourceImage == null) {
 			redraw();
 			return;
@@ -236,14 +236,33 @@ public class ImageCanvas extends Canvas {
 	 * 
 	 * @param filename
 	 *            image file
+	 * @return swt image created from image file
 	 */
-	public void setImage(Image image) {
+	public Image loadImage(String filename) {
 		if (sourceImage != null && !sourceImage.isDisposed()) {
 			sourceImage.dispose();
 			sourceImage = null;
 		}
-		sourceImage = image;
+		sourceImage = new Image(getDisplay(), filename);
 		showOriginal();
+		return sourceImage;
+	}
+
+	/**
+	 * Call back funtion of button "open". Will open a file dialog, and choose
+	 * the image file. It supports image formats supported by Eclipse.
+	 */
+	public void onFileOpen() {
+		FileDialog fileChooser = new FileDialog(getShell(), SWT.OPEN);
+		fileChooser.setText("Open image file");
+		fileChooser.setFilterPath(currentDir);
+		fileChooser.setFilterExtensions(new String[] { "*.gif; *.jpg; *.png; *.ico; *.bmp" });
+		fileChooser.setFilterNames(new String[] { "SWT image" + " (gif, jpeg, png, ico, bmp)" });
+		String filename = fileChooser.open();
+		if (filename != null) {
+			loadImage(filename);
+			currentDir = fileChooser.getFilterPath();
+		}
 	}
 
 	/**
@@ -272,7 +291,7 @@ public class ImageCanvas extends Canvas {
 	/**
 	 * Fit the image onto the canvas
 	 */
-	protected void fitCanvas() {
+	public void fitCanvas() {
 		if (sourceImage == null)
 			return;
 		Rectangle imageBound = sourceImage.getBounds();
@@ -288,12 +307,11 @@ public class ImageCanvas extends Canvas {
 	/**
 	 * Show the image with the original size
 	 */
-	protected void showOriginal() {
+	public void showOriginal() {
 		if (sourceImage == null)
 			return;
 		transform = new AffineTransform();
-		// syncScrollBars();
-		fitCanvas();
+		syncScrollBars();
 	}
 
 	/**
@@ -310,11 +328,37 @@ public class ImageCanvas extends Canvas {
 	 * @param af
 	 *            original affinetransform
 	 */
-	protected void centerZoom(double dx, double dy, double scale, AffineTransform af) {
+	public void centerZoom(double dx, double dy, double scale, AffineTransform af) {
 		af.preConcatenate(AffineTransform.getTranslateInstance(-dx, -dy));
 		af.preConcatenate(AffineTransform.getScaleInstance(scale, scale));
 		af.preConcatenate(AffineTransform.getTranslateInstance(dx, dy));
 		transform = af;
 		syncScrollBars();
+	}
+
+	/**
+	 * Zoom in around the center of client Area.
+	 */
+	public void zoomIn() {
+		if (sourceImage == null)
+			return;
+		Rectangle rect = getClientArea();
+		int w = rect.width, h = rect.height;
+		double dx = ((double) w) / 2;
+		double dy = ((double) h) / 2;
+		centerZoom(dx, dy, ZOOMIN_RATE, transform);
+	}
+
+	/**
+	 * Zoom out around the center of client Area.
+	 */
+	public void zoomOut() {
+		if (sourceImage == null)
+			return;
+		Rectangle rect = getClientArea();
+		int w = rect.width, h = rect.height;
+		double dx = ((double) w) / 2;
+		double dy = ((double) h) / 2;
+		centerZoom(dx, dy, ZOOMOUT_RATE, transform);
 	}
 }
