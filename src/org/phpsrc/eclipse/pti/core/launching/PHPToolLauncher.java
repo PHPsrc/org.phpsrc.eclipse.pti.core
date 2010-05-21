@@ -140,7 +140,7 @@ public class PHPToolLauncher {
 				if (printOutput) {
 					php.addOutputListener(new IOutputListener() {
 						public void handleOutput(String output) {
-							Logger.logToConsole(output, true);
+							Logger.logToConsoleWithoutBreak(output);
 						}
 					});
 				}
@@ -149,8 +149,8 @@ public class PHPToolLauncher {
 				IStreamsProxy proxy = process.getStreamsProxy();
 				String output = proxy.getOutputStreamMonitor().getContents();
 
-				if (printOutput)
-					Logger.logToConsole(output, true);
+				// if (printOutput)
+				// Logger.logToConsole(output, true);
 
 				return output;
 			} else {

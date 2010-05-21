@@ -26,7 +26,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -154,6 +156,12 @@ public class PHPToolExecutableLauncher {
 				p.destroy();
 				throw new CoreException(new Status(IStatus.ERROR, PHPToolCorePlugin.PLUGIN_ID, 0, null, null));
 			}
+
+			process.getStreamsProxy().getOutputStreamMonitor().addListener(new IStreamListener() {
+				public void streamAppended(String text, IStreamMonitor monitor) {
+					notifyOutputListener(text);
+				}
+			});
 			subMonitor.done();
 		}
 		process.setAttribute(IProcess.ATTR_CMDLINE, fileName);

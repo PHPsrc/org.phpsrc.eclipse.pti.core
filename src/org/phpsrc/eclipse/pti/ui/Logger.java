@@ -61,7 +61,7 @@ public class Logger {
 		MessageConsole myConsole = findConsole(CONSOLE_NAME, toTop);
 
 		MessageConsoleStream out = myConsole.newMessageStream();
-		out.println(output);
+		out.print(output);
 	}
 
 	public static void log(int level, String message) {
@@ -93,11 +93,15 @@ public class Logger {
 	}
 
 	public static void logToConsole(String message) {
-		logToConsole(message, false);
+		logToConsole(message + "\n", false);
 	}
 
 	public static void logToConsole(String message, boolean toTop) {
-		_logToConsole(message, toTop);
+		_logToConsole(message + "\n", toTop);
+	}
+
+	public static void logToConsoleWithoutBreak(String message) {
+		_logToConsole(message, false);
 	}
 
 	private static MessageConsole findConsole(String name, boolean toTop) {
@@ -120,8 +124,8 @@ public class Logger {
 			conMan.addConsoles(new IConsole[] { myConsole });
 		}
 
-		if (toTop)
-			conMan.showConsoleView(myConsole);
+		// if (toTop)
+		// conMan.showConsoleView(myConsole);
 
 		return myConsole;
 	}
