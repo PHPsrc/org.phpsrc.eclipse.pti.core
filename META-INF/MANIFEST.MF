@@ -20,7 +20,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.5.0",
  org.eclipse.ui.ide;bundle-version="3.5.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: org.phpsrc.eclipse.pti.core,
+Export-Package: org.json,
+ org.phpsrc.eclipse.pti.core,
  org.phpsrc.eclipse.pti.core.compiler.problem,
  org.phpsrc.eclipse.pti.core.jobs,
  org.phpsrc.eclipse.pti.core.launching,
