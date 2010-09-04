@@ -112,6 +112,7 @@ public class PHPToolExecutableLauncher {
 				args);
 
 		notifyOutputListener(cmdLine, ' ');
+		notifyOutputListener("\n");
 
 		// Set library search path:
 		if (!OperatingSystem.WINDOWS) {
