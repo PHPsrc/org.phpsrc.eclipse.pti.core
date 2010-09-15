@@ -59,6 +59,12 @@ public class PHPToolLauncher {
 	private String commandLineArgs;
 	private boolean printOutput = false;
 	private Hashtable<String, String> attributes = new Hashtable<String, String>();
+	private final PHPToolExecutableLauncher phpLauncher;
+	private IOutputListener outputListener = new IOutputListener() {
+		public void handleOutput(String output) {
+			Logger.logToConsoleWithoutBreak(output);
+		}
+	};
 
 	public PHPToolLauncher(QualifiedName tool, PHPexeItem phpExe, IPath phpScript) {
 		this(tool, phpExe, phpScript, "");
@@ -82,12 +88,13 @@ public class PHPToolLauncher {
 	 */
 	public PHPToolLauncher(QualifiedName tool, PHPexeItem phpExe, IPath phpScript, String commandLineArgs,
 			INIFileEntry[] iniEntries) {
+		Assert.isNotNull(tool);
 		this.tool = tool;
 		this.phpExe = phpExe;
 		this.phpScript = phpScript;
 		this.commandLineArgs = commandLineArgs;
 		this.iniEntries = iniEntries;
-		Assert.isNotNull(tool);
+		phpLauncher = new PHPToolExecutableLauncher();
 	}
 
 	public String launch(IFile file) {
@@ -104,6 +111,10 @@ public class PHPToolLauncher {
 
 	public String launch(IProject project) {
 		return launch(project, "");
+	}
+
+	public void addOutputListener(IOutputListener listener) {
+		phpLauncher.addOutputListener(listener);
 	}
 
 	protected String launch(IProject project, String phpFileLocation) {
@@ -135,22 +146,20 @@ public class PHPToolLauncher {
 				wc.setAttribute(IDebugParametersKeys.EXE_CONFIG_PROGRAM_ARGUMENTS, arguments);
 				config = wc.doSave();
 
-				PHPToolExecutableLauncher php = new PHPToolExecutableLauncher();
-
 				if (printOutput) {
-					php.addOutputListener(new IOutputListener() {
-						public void handleOutput(String output) {
-							Logger.logToConsoleWithoutBreak(output);
-						}
-					});
+					phpLauncher.addOutputListener(outputListener);
 				}
 
-				IProcess process = php.launch(config);
+				IProcess process = phpLauncher.launch(config);
 				IStreamsProxy proxy = process.getStreamsProxy();
 				String output = proxy.getOutputStreamMonitor().getContents();
 
 				// if (printOutput)
 				// Logger.logToConsole(output, true);
+
+				if (printOutput) {
+					phpLauncher.removeOutputListener(outputListener);
+				}
 
 				return output;
 			} else {

@@ -16,12 +16,14 @@ public class OperatingSystem {
 	public static String escapeShellArg(String arg) {
 		if (WINDOWS) {
 			return "\"" + arg.replace("\"", "\\\"") + "\"";
-		} else {
+		} else if (!MAC) {
 			return arg.replace(" ", "\\ ");
+		} else {
+			return arg;
 		}
 	}
 
 	public static String escapeShellFileArg(String fileName) {
-		return escapeShellArg(fileName);
+		return "\"" + fileName.replace("\"", "\\\"") + "\"";
 	}
 }

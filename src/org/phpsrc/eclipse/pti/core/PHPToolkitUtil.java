@@ -218,6 +218,8 @@ public class PHPToolkitUtil {
 	}
 
 	public static boolean hasSuperClass(ISourceModule module, String className) {
+		Assert.isNotNull(module);
+		Assert.isNotNull(className);
 		try {
 			IType[] types = module.getAllTypes();
 			if (types.length > 0) {
