@@ -31,6 +31,8 @@ public class OperatingSystem {
 	}
 	
 	public static String escapePHPFileArg(String fileName) {
-		return "\"" + fileName.replace("\"", "\\\"") + "\"";
+		if (WINDOWS)
+			return "\"" + fileName.replace("\"", "\\\"") + "\"";
+		return fileName;
 	}
 }
