@@ -24,6 +24,13 @@ public class OperatingSystem {
 	}
 
 	public static String escapeShellFileArg(String fileName) {
+		if (WINDOWS)
+			return "\"" + fileName.replace("\"", "\\\"") + "\"";
+		else
+			return fileName;
+	}
+	
+	public static String escapePHPFileArg(String fileName) {
 		return "\"" + fileName.replace("\"", "\\\"") + "\"";
 	}
 }

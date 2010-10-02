@@ -134,8 +134,8 @@ public class PHPToolLauncher {
 			if (config != null) {
 				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
 
-				String arguments = commandLineArgs.replace(COMMANDLINE_PLACEHOLDER_FILE, OperatingSystem.WINDOWS ? OperatingSystem
-						.escapeShellFileArg(phpFileLocation) : phpFileLocation);
+				String arguments = commandLineArgs.replace(COMMANDLINE_PLACEHOLDER_FILE, OperatingSystem
+						.escapeShellFileArg(phpFileLocation));
 
 				int lastPos = phpFileLocation.lastIndexOf("\\") != -1 ? phpFileLocation.lastIndexOf("\\")
 						: phpFileLocation.lastIndexOf("/");

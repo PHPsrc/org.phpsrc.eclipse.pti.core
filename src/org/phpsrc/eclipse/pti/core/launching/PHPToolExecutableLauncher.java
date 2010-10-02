@@ -46,27 +46,30 @@ import org.phpsrc.eclipse.pti.core.listener.IOutputListener;
 public class PHPToolExecutableLauncher {
 	protected ListenerList outputListenerList = new ListenerList();
 
-	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
+	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode)
+			throws CoreException {
 		return new PHPLaunch(configuration, mode, null);
 	}
 
-	public IProcess launch(ILaunchConfiguration configuration) throws CoreException {
+	public IProcess launch(ILaunchConfiguration configuration)
+			throws CoreException {
 		return launch(configuration, new NullProgressMonitor());
 	}
 
-	public IProcess launch(ILaunchConfiguration configuration, IProgressMonitor monitor)
-			throws CoreException {
-		return launch(configuration, getLaunch(configuration, ILaunchManager.RUN_MODE), monitor);
+	public IProcess launch(ILaunchConfiguration configuration,
+			IProgressMonitor monitor) throws CoreException {
+		return launch(configuration,
+				getLaunch(configuration, ILaunchManager.RUN_MODE), monitor);
 	}
 
 	public IProcess launch(ILaunchConfiguration configuration, ILaunch launch,
 			IProgressMonitor monitor) throws CoreException {
 		String phpExeString = configuration.getAttribute(
 				IPHPDebugConstants.ATTR_EXECUTABLE_LOCATION, (String) null);
-		String phpIniPath = configuration.getAttribute(IPHPDebugConstants.ATTR_INI_LOCATION,
-				(String) null);
-		String fileName = configuration.getAttribute(IPHPDebugConstants.ATTR_FILE_FULL_PATH,
-				(String) null);
+		String phpIniPath = configuration.getAttribute(
+				IPHPDebugConstants.ATTR_INI_LOCATION, (String) null);
+		String fileName = configuration.getAttribute(
+				IPHPDebugConstants.ATTR_FILE_FULL_PATH, (String) null);
 
 		if (monitor.isCanceled()) {
 			return null;
@@ -86,16 +89,19 @@ public class PHPToolExecutableLauncher {
 
 		// Locate the php.ini by using the attribute. If the attribute was null,
 		// try to locate an php.ini that exists next to the executable.
-		File phpIni = (phpIniPath != null && new File(phpIniPath).exists()) ? new File(phpIniPath)
-				: PHPINIUtil.findPHPIni(phpExeString);
-		launch.setAttribute(IDebugParametersKeys.PHP_INI_LOCATION, phpIni.getAbsolutePath());
+		File phpIni = (phpIniPath != null && new File(phpIniPath).exists()) ? new File(
+				phpIniPath) : PHPINIUtil.findPHPIni(phpExeString);
+		launch.setAttribute(IDebugParametersKeys.PHP_INI_LOCATION,
+				phpIni.getAbsolutePath());
 
 		// resolve location
 		IPath phpExe = new Path(phpExeString);
 
-		String[] envp = DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
+		String[] envp = DebugPlugin.getDefault().getLaunchManager()
+				.getEnvironment(configuration);
 		File phpExeFile = new File(phpExeString);
-		String phpIniLocation = launch.getAttribute(IDebugParametersKeys.PHP_INI_LOCATION);
+		String phpIniLocation = launch
+				.getAttribute(IDebugParametersKeys.PHP_INI_LOCATION);
 
 		// Determine PHP configuration file location:
 		String phpConfigDir = phpExeFile.getParent();
@@ -103,13 +109,13 @@ public class PHPToolExecutableLauncher {
 			phpConfigDir = new File(phpIniLocation).getParent();
 		}
 
-		String[] args = PHPLaunchUtilities.getProgramArguments(launch.getLaunchConfiguration());
+		String[] args = PHPLaunchUtilities.getProgramArguments(launch
+				.getLaunchConfiguration());
 
-		String[] cmdLine = PHPLaunchUtilities.getCommandLine(launch.getLaunchConfiguration(),
-				OperatingSystem.WINDOWS ? OperatingSystem.escapeShellFileArg(phpExeString)
-						: phpExeString, phpConfigDir,
-				OperatingSystem.WINDOWS ? OperatingSystem.escapeShellFileArg(fileName) : fileName,
-				args);
+		String[] cmdLine = PHPLaunchUtilities.getCommandLine(
+				launch.getLaunchConfiguration(),
+				OperatingSystem.escapeShellFileArg(phpExeString), phpConfigDir,
+				OperatingSystem.escapeShellFileArg(fileName), args);
 
 		notifyOutputListener(cmdLine, ' ');
 		notifyOutputListener("\n");
@@ -137,8 +143,8 @@ public class PHPToolExecutableLauncher {
 		}
 
 		File workingDir = new File(fileName).getParentFile();
-		Process p = workingDir.exists() ? DebugPlugin.exec(cmdLine, workingDir, envp) : DebugPlugin
-				.exec(cmdLine, null, envp);
+		Process p = workingDir.exists() ? DebugPlugin.exec(cmdLine, workingDir,
+				envp) : DebugPlugin.exec(cmdLine, null, envp);
 
 		IProcess process = null;
 
@@ -148,7 +154,8 @@ public class PHPToolExecutableLauncher {
 		String extension = phpExe.getFileExtension();
 
 		if (extension != null) {
-			programName = programName.substring(0, programName.length() - (extension.length() + 1));
+			programName = programName.substring(0, programName.length()
+					- (extension.length() + 1));
 		}
 
 		programName = programName.toLowerCase();
@@ -158,13 +165,14 @@ public class PHPToolExecutableLauncher {
 			subMonitor = new SubProgressMonitor(monitor, 80); // 10+80 of 100;
 			subMonitor
 					.beginTask(
-							MessageFormat.format(
-									"start launch", new Object[] { configuration.getName() }), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-			process = DebugPlugin.newProcess(launch, p, phpExe.toOSString(), processAttributes);
+							MessageFormat
+									.format("start launch", new Object[] { configuration.getName() }), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+			process = DebugPlugin.newProcess(launch, p, phpExe.toOSString(),
+					processAttributes);
 			if (process == null) {
 				p.destroy();
-				throw new CoreException(new Status(IStatus.ERROR, PHPToolCorePlugin.PLUGIN_ID, 0,
-						null, null));
+				throw new CoreException(new Status(IStatus.ERROR,
+						PHPToolCorePlugin.PLUGIN_ID, 0, null, null));
 			}
 
 			IStreamListener outputListener = new IStreamListener() {
@@ -173,8 +181,10 @@ public class PHPToolExecutableLauncher {
 				}
 			};
 
-			process.getStreamsProxy().getErrorStreamMonitor().addListener(outputListener);
-			process.getStreamsProxy().getOutputStreamMonitor().addListener(outputListener);
+			process.getStreamsProxy().getErrorStreamMonitor()
+					.addListener(outputListener);
+			process.getStreamsProxy().getOutputStreamMonitor()
+					.addListener(outputListener);
 			subMonitor.done();
 		}
 		process.setAttribute(IProcess.ATTR_CMDLINE, fileName);
@@ -206,7 +216,8 @@ public class PHPToolExecutableLauncher {
 		display.asyncExec(new Runnable() {
 			public void run() {
 				MessageDialog.openError(display.getActiveShell(),
-						PHPDebugCoreMessages.Debugger_LaunchError_title, message);
+						PHPDebugCoreMessages.Debugger_LaunchError_title,
+						message);
 			}
 		});
 	}
