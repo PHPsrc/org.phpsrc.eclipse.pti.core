@@ -115,7 +115,7 @@ public class PHPToolExecutableLauncher {
 		String[] cmdLine = PHPLaunchUtilities.getCommandLine(
 				launch.getLaunchConfiguration(),
 				OperatingSystem.escapePHPFileArg(phpExeString), phpConfigDir,
-				OperatingSystem.escapePHPFileArg(fileName), args);
+				OperatingSystem.escapeShellFileArg(fileName), args);
 
 		notifyOutputListener(cmdLine, ' ');
 		notifyOutputListener("\n");

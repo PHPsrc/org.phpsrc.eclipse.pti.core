@@ -27,7 +27,7 @@ public class OperatingSystem {
 		if (WINDOWS)
 			return "\"" + fileName.replace("\"", "\\\"") + "\"";
 		else
-			return fileName;
+			return fileName.replace(" ", "\\ ");
 	}
 	
 	public static String escapePHPFileArg(String fileName) {
