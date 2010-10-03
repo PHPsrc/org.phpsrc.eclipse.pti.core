@@ -143,8 +143,6 @@ public class PHPToolLauncher {
 						lastPos)) : "";
 				arguments = arguments.replace(COMMANDLINE_PLACEHOLDER_FOLDER, folderPath);
 				
-				System.out.println(arguments);
-
 				wc.setAttribute(IDebugParametersKeys.EXE_CONFIG_PROGRAM_ARGUMENTS, arguments);
 				config = wc.doSave();
 
