@@ -36,7 +36,8 @@ public class PHPToolkitUtil {
 
 	public static boolean isPhpElement(final IModelElement modelElement) {
 		Assert.isNotNull(modelElement);
-		IModelElement sourceModule = modelElement.getAncestor(IModelElement.SOURCE_MODULE);
+		IModelElement sourceModule = modelElement
+				.getAncestor(IModelElement.SOURCE_MODULE);
 		if (sourceModule != null) {
 			return isPhpFile((ISourceModule) sourceModule);
 		}
@@ -47,8 +48,10 @@ public class PHPToolkitUtil {
 		try {
 			IResource resource = sourceModule.getCorrespondingResource();
 			if (resource instanceof IFile) {
-				IContentDescription contentDescription = ((IFile) resource).getContentDescription();
-				return IPHPCoreConstants.ContentTypeID_PHP.equals(contentDescription.getContentType().getId());
+				IContentDescription contentDescription = ((IFile) resource)
+						.getContentDescription();
+				return IPHPCoreConstants.ContentTypeID_PHP
+						.equals(contentDescription.getContentType().getId());
 			}
 		} catch (CoreException e) {
 		}
@@ -70,7 +73,8 @@ public class PHPToolkitUtil {
 			return hasPhpExtention(file);
 		}
 
-		return IPHPCoreConstants.ContentTypeID_PHP.equals(contentDescription.getContentType().getId());
+		return IPHPCoreConstants.ContentTypeID_PHP.equals(contentDescription
+				.getContentType().getId());
 	}
 
 	public static boolean hasPhpExtention(final IFile file) {
@@ -80,8 +84,10 @@ public class PHPToolkitUtil {
 			return false;
 		}
 		String extension = fileName.substring(index + 1);
-		final IContentType type = Platform.getContentTypeManager().getContentType(IPHPCoreConstants.ContentTypeID_PHP);
-		final String[] validExtensions = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+		final IContentType type = Platform.getContentTypeManager()
+				.getContentType(IPHPCoreConstants.ContentTypeID_PHP);
+		final String[] validExtensions = type
+				.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 		for (String validExtension : validExtensions) {
 			if (extension.equalsIgnoreCase(validExtension)) {
 				return true;
@@ -102,8 +108,10 @@ public class PHPToolkitUtil {
 		}
 		String extension = fileName.substring(index + 1);
 
-		final IContentType type = Platform.getContentTypeManager().getContentType(IPHPCoreConstants.ContentTypeID_PHP);
-		final String[] validExtensions = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+		final IContentType type = Platform.getContentTypeManager()
+				.getContentType(IPHPCoreConstants.ContentTypeID_PHP);
+		final String[] validExtensions = type
+				.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 		for (String validExtension : validExtensions) {
 			if (extension.equalsIgnoreCase(validExtension)) {
 				return true;
@@ -124,7 +132,8 @@ public class PHPToolkitUtil {
 			return false;
 		}
 
-		final IProjectNature nature = project.getNature(IPHPCoreConstants.PHPNatureID);
+		final IProjectNature nature = project
+				.getNature(IPHPCoreConstants.PHPNatureID);
 		return nature != null;
 	}
 
@@ -178,7 +187,8 @@ public class PHPToolkitUtil {
 	 * @return source module
 	 */
 	public static ISourceModule getSourceModule(String element) {
-		IResource resource = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(element));
+		IResource resource = ResourcesPlugin.getWorkspace().getRoot()
+				.getFileForLocation(new Path(element));
 		if (resource != null && resource instanceof IFile) {
 			return (ISourceModule) DLTKCore.create((IFile) resource);
 		}
@@ -189,7 +199,8 @@ public class PHPToolkitUtil {
 		File tmpFile = null;
 		try {
 			// Create temporary directory:
-			File tempDir = new File(System.getProperty("java.io.tmpdir"), "eclipse_pti"); //$NON-NLS-1$ //$NON-NLS-2$
+			File tempDir = new File(
+					System.getProperty("java.io.tmpdir"), "eclipse_pti"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (!tempDir.exists()) {
 				tempDir.mkdir();
 				tempDir.deleteOnExit();
@@ -207,41 +218,6 @@ public class PHPToolkitUtil {
 			Logger.logException(e);
 		}
 		return tmpFile;
-	}
-
-	public static boolean hasSuperClass(IResource resource, String className) {
-		ISourceModule module = PHPToolkitUtil.getSourceModule(resource);
-		if (module != null)
-			return hasSuperClass(module, className);
-
-		return false;
-	}
-
-	public static boolean hasSuperClass(ISourceModule module, String className) {
-		Assert.isNotNull(module);
-		Assert.isNotNull(className);
-		try {
-			IType[] types = module.getAllTypes();
-			if (types.length > 0) {
-				String[] classes = types[0].getSuperClasses();
-				for (String c : classes) {
-					if (c.equals(className)) {
-						return true;
-					} else {
-						SearchMatch[] matches = PHPSearchEngine.findClass(c, PHPSearchEngine.createProjectScope(module
-								.getScriptProject().getProject()));
-						for (SearchMatch match : matches) {
-							if (hasSuperClass(match.getResource(), className))
-								return true;
-						}
-					}
-				}
-			}
-		} catch (ModelException e) {
-			Logger.logException(e);
-		}
-
-		return false;
 	}
 
 	public static IMethod getClassMethod(ISourceModule module, String methodName) {
@@ -264,7 +240,8 @@ public class PHPToolkitUtil {
 	/**
 	 * @since 1.4.0
 	 */
-	public static IMethod getClassMethod(ISourceModule module, String className, String methodName) {
+	public static IMethod getClassMethod(ISourceModule module,
+			String className, String methodName) {
 		Assert.isNotNull(module);
 		Assert.isNotNull(className);
 		Assert.isNotNull(methodName);
@@ -312,7 +289,8 @@ public class PHPToolkitUtil {
 		Assert.isNotNull(functionName);
 		try {
 			for (IModelElement child : module.getChildren()) {
-				if (child.getElementType() == IModelElement.METHOD && child.getElementName().equals(functionName)) {
+				if (child.getElementType() == IModelElement.METHOD
+						&& child.getElementName().equals(functionName)) {
 					if (child instanceof IMethod)
 						return (IMethod) child;
 					else
@@ -324,5 +302,124 @@ public class PHPToolkitUtil {
 		}
 
 		return null;
+	}
+
+	public static String getClassName(IFile file) {
+		return getClassName(PHPToolkitUtil.getSourceModule(file));
+	}
+
+	public static String getClassName(ISourceModule module) {
+		if (module != null) {
+			try {
+				IType[] types = module.getAllTypes();
+				return getClassType(types).getElementName();
+			} catch (ModelException e) {
+				Logger.logException(e);
+			}
+		}
+
+		return null;
+	}
+
+	public static String getNamespace(IFile file) {
+		return getNamespace(PHPToolkitUtil.getSourceModule(file));
+	}
+
+	public static String getNamespace(ISourceModule module) {
+		if (module != null) {
+			try {
+				IType[] types = module.getAllTypes();
+				if (types != null && types.length > 0) {
+					if (types.length > 1) {
+						// Namespaces have subtypes and classes not
+						if (types[0].getTypes().length > 0) {
+							return types[0].getElementName();
+						}
+					}
+				}
+			} catch (ModelException e) {
+				Logger.logException(e);
+			}
+		}
+
+		return null;
+	}
+
+	public static String getClassNameWithNamespace(IFile file) {
+		return getClassNameWithNamespace(PHPToolkitUtil.getSourceModule(file));
+	}
+
+	public static String getClassNameWithNamespace(ISourceModule module) {
+		String className = getClassName(module);
+		if (className != null) {
+			String namespace = getNamespace(module);
+			if (namespace != null) {
+				return namespace + "\\" + className;
+			} else {
+				return className;
+			}
+		}
+
+		return null;
+	}
+
+	private static IType getClassType(IType[] types) {
+		if (types != null && types.length > 0) {
+			try {
+				if (types.length == 1) {
+					return types[0];
+				} else {
+					// Namespaces have subtypes and classes not
+					if (types[0].getTypes().length > 0) {
+						return types[1];
+					} else {
+						return types[0];
+					}
+				}
+			} catch (ModelException e) {
+				Logger.logException(e);
+			}
+		}
+
+		return null;
+	}
+
+	public static boolean hasSuperClass(IResource resource, String className) {
+		ISourceModule module = PHPToolkitUtil.getSourceModule(resource);
+		if (module != null)
+			return hasSuperClass(module, className);
+
+		return false;
+	}
+
+	public static boolean hasSuperClass(ISourceModule module, String className) {
+		Assert.isNotNull(module);
+		Assert.isNotNull(className);
+		try {
+			IType[] types = module.getAllTypes();
+			if (types.length > 0) {
+				String[] classes = getClassType(types).getSuperClasses();
+				for (String c : classes) {
+					if (c.indexOf('\\') >= 0)
+						c = c.substring(c.lastIndexOf('\\') + 1);
+
+					if (c.equals(className)) {
+						return true;
+					} else {
+						SearchMatch[] matches = PHPSearchEngine.findClass(c,
+								PHPSearchEngine.createProjectScope(module
+										.getScriptProject().getProject()));
+						for (SearchMatch match : matches) {
+							if (hasSuperClass(match.getResource(), className))
+								return true;
+						}
+					}
+				}
+			}
+		} catch (ModelException e) {
+			Logger.logException(e);
+		}
+
+		return false;
 	}
 }
