@@ -140,6 +140,7 @@ public class INIFileModifier {
 		if (sectionName == null || name == null || value == null) {
 			throw new NullPointerException();
 		}
+
 		for (INIFileSection section : sections) {
 			if (section.name.equals(sectionName)) {
 				if (replace) {
@@ -388,12 +389,17 @@ public class INIFileModifier {
 		sections.add(currentSection);
 		while ((line = r.readLine()) != null) {
 			line = line.trim();
-			Matcher m = SECTION_PATTERN.matcher(line);
-			if (m.matches()) {
-				String sectionName = m.group(1);
+			Matcher sm = SECTION_PATTERN.matcher(line);
+			if (sm.matches()) {
+				String sectionName = sm.group(1);
 				currentSection = new INIFileSection(sectionName);
 				sections.add(currentSection);
 			} else {
+				Matcher nvm = NAME_VAL_PATTERN.matcher(line);
+				if (nvm.matches()) {
+					removeEntry(nvm.group(1), null);
+				}
+
 				currentSection.lines.add(line);
 			}
 		}
