@@ -141,6 +141,10 @@ public class INIFileModifier {
 			throw new NullPointerException();
 		}
 
+		if (replace) {
+			removeEntry(sectionName, name, replacePattern);
+		}
+
 		for (INIFileSection section : sections) {
 			if (section.name.equals(sectionName)) {
 				if (replace) {
