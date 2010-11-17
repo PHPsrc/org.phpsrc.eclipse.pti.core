@@ -27,14 +27,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.phpsrc.eclipse.pti.core.PHPToolCorePlugin;
+import org.phpsrc.eclipse.pti.core.PHPToolkitUtil;
 import org.phpsrc.eclipse.pti.core.search.PHPSearchEngine;
 import org.phpsrc.eclipse.pti.core.search.PHPSearchMatch;
 
-public class FilteredPHPClassSelectionDialog extends FilteredItemsSelectionDialog {
+@SuppressWarnings("restriction")
+public class FilteredPHPClassSelectionDialog extends
+		FilteredItemsSelectionDialog {
 
 	private static final String DIALOG_SETTINGS = "org.phpsrc.eclipse.pti.core.search.ui.dialogs.FilteredPHPClassSelectionDialog";
 
-	private static final Image IMAGE_CLASS = DLTKPluginImages.DESC_OBJS_CLASS.createImage();
+	private static final Image IMAGE_CLASS = DLTKPluginImages.DESC_OBJS_CLASS
+			.createImage();
 
 	private class DetailLabelProvider extends LabelProvider {
 		public String getText(Object element) {
@@ -55,7 +59,9 @@ public class FilteredPHPClassSelectionDialog extends FilteredItemsSelectionDialo
 		public String getText(Object element) {
 			if (!(element instanceof PHPSearchMatch))
 				return null;
-			return ((PHPSearchMatch) element).getElement().getElementName();
+			return PHPToolkitUtil
+					.getClassNameWithNamespace(((PHPSearchMatch) element)
+							.getElement().getSourceModule());
 		}
 
 		public Image getImage(Object element) {
@@ -90,32 +96,39 @@ public class FilteredPHPClassSelectionDialog extends FilteredItemsSelectionDialo
 				if (!(item instanceof PHPSearchMatch))
 					return false;
 
-				return matches(((PHPSearchMatch) item).getElement().getElementName());
+				return matches(((PHPSearchMatch) item).getElement()
+						.getElementName());
 			}
 		};
 	}
 
-	protected void fillContentProvider(AbstractContentProvider provider, ItemsFilter filter, IProgressMonitor monitor)
-			throws CoreException {
+	protected void fillContentProvider(AbstractContentProvider provider,
+			ItemsFilter filter, IProgressMonitor monitor) throws CoreException {
 		int matchRule = SearchPattern.R_PREFIX_MATCH;
-		SearchMatch[] matches = PHPSearchEngine.findClass(filter.getPattern(), matchRule);
+		SearchMatch[] matches = PHPSearchEngine.findClass(filter.getPattern(),
+				matchRule);
 		for (SearchMatch match : matches) {
-			provider.add(new PHPSearchMatch((SourceType) match.getElement(), match.getResource()), filter);
+			provider.add(new PHPSearchMatch((SourceType) match.getElement(),
+					match.getResource()), filter);
 		}
 	}
 
 	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = PHPToolCorePlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS);
+		IDialogSettings settings = PHPToolCorePlugin.getDefault()
+				.getDialogSettings().getSection(DIALOG_SETTINGS);
 
 		if (settings == null) {
-			settings = PHPToolCorePlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS);
+			settings = PHPToolCorePlugin.getDefault().getDialogSettings()
+					.addNewSection(DIALOG_SETTINGS);
 		}
 
 		return settings;
 	}
 
 	public String getElementName(Object element) {
-		return ((PHPSearchMatch) element).getElement().getElementName();
+		return PHPToolkitUtil
+				.getClassNameWithNamespace(((PHPSearchMatch) element)
+						.getElement().getSourceModule());
 	}
 
 	protected Comparator<Object> getItemsComparator() {
@@ -128,7 +141,8 @@ public class FilteredPHPClassSelectionDialog extends FilteredItemsSelectionDialo
 	}
 
 	protected IStatus validateItem(Object item) {
-		return new Status(IStatus.OK, PHPToolCorePlugin.PLUGIN_ID, IStatus.OK, "", null);
+		return new Status(IStatus.OK, PHPToolCorePlugin.PLUGIN_ID, IStatus.OK,
+				"", null);
 	}
 
 }
