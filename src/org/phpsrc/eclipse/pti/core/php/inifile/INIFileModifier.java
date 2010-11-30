@@ -400,7 +400,10 @@ public class INIFileModifier {
 				sections.add(currentSection);
 			} else {
 				Matcher nvm = NAME_VAL_PATTERN.matcher(line);
-				if (nvm.matches()) {
+				// check only for double "include_path" (double include_path
+				// problem) since other attributes like "extension" are allowed
+				// more then once.
+				if (nvm.matches() && "include_path".equals(nvm.group(1))) {
 					removeEntry(nvm.group(1), null);
 				}
 
