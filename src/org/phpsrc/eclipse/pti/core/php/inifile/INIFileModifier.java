@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -473,5 +474,51 @@ public class INIFileModifier {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get all entries from the INI file from the global section.
+	 * 
+	 * @param name
+	 *            Entry name
+	 * @param removePattern
+	 *            Pattern to check against existing entry value, before removing
+	 *            it. If <code>removePattern</code> is <code>null</code> every
+	 *            entry that matches the given name will be removed.
+	 * @return <code>true</code> if some entry was removed, otherwise - false
+	 */
+	public String[] getEntries(String name) {
+		return getEntries(GLOBAL_SECTION, name);
+	}
+
+	/**
+	 * Get all entries from the INI file.
+	 * 
+	 * @param sectionName
+	 *            Section name
+	 * @param name
+	 *            Entry name
+	 */
+	public String[] getEntries(String sectionName, String name) {
+		if (name == null) {
+			throw new NullPointerException();
+		}
+
+		List<String> entries = new ArrayList<String>();
+
+		for (INIFileSection section : sections) {
+			for (int i = 0; i < section.lines.size(); ++i) {
+				Matcher m = NAME_VAL_PATTERN.matcher(section.lines.get(i));
+				if (m.matches()) {
+					String oldName = m.group(1);
+					String oldValue = m.group(2);
+					if (oldName.equals(name)) {
+						entries.add(removeQuotes(oldValue));
+					}
+				}
+			}
+		}
+
+		return entries.toArray(new String[0]);
 	}
 }
