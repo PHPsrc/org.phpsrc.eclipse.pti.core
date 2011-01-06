@@ -9,8 +9,8 @@
 package org.phpsrc.eclipse.pti.core.launching;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -118,10 +118,15 @@ public class PHPToolExecutableLauncher {
 				OperatingSystem.escapePHPFileArg(phpExeString), phpConfigDir,
 				OperatingSystem.escapeShellFileArg(fileName), args);
 
-		for(int i=0; i<cmdLine.length; ++i) {
-			cmdLine[i] = cmdLine[i].replace(OperatingSystem.PLACEHOLDER_WHITESPACE, ' ');
+		// remove unwanted -n argument
+		ArrayList<String> newCmdLineList = new ArrayList<String>(cmdLine.length);
+		for (int i = 0; i < cmdLine.length; ++i) {
+			if (!cmdLine[i].equals("-n"))
+				newCmdLineList.add(cmdLine[i].replace(
+						OperatingSystem.PLACEHOLDER_WHITESPACE, ' '));
 		}
-		
+		cmdLine = newCmdLineList.toArray(new String[0]);
+
 		notifyOutputListener(cmdLine, ' ');
 		notifyOutputListener("\n");
 
@@ -146,9 +151,9 @@ public class PHPToolExecutableLauncher {
 		if (monitor.isCanceled()) {
 			return null;
 		}
-		
+
 		File workingDir = new File(fileName).getParentFile();
-		
+
 		Process p = workingDir.exists() ? DebugPlugin.exec(cmdLine, workingDir,
 				envp) : DebugPlugin.exec(cmdLine, null, envp);
 
