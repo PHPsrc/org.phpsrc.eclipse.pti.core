@@ -335,7 +335,7 @@ public class PHPToolLauncher {
 						String oldValue = modifier.getEntry(entry.getSection(),
 								entry.getName());
 						if (oldValue != null)
-							newValue += ";" + oldValue;
+							newValue += File.pathSeparator + oldValue;
 					}
 
 					modifier.addEntry(entry.getSection(), entry.getName(),
