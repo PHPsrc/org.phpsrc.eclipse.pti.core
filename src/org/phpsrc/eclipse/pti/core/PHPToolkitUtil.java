@@ -9,6 +9,7 @@
 package org.phpsrc.eclipse.pti.core;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -411,6 +412,48 @@ public class PHPToolkitUtil {
 										.getScriptProject().getProject()));
 						for (SearchMatch match : matches) {
 							if (hasSuperClass(match.getResource(), className))
+								return true;
+						}
+					}
+				}
+			}
+		} catch (ModelException e) {
+			Logger.logException(e);
+		}
+
+		return false;
+	}
+
+	public static boolean hasSuperClass(IResource resource,
+			Pattern classNamePattern) {
+		ISourceModule module = PHPToolkitUtil.getSourceModule(resource);
+		if (module != null)
+			return hasSuperClass(module, classNamePattern);
+
+		return false;
+	}
+
+	public static boolean hasSuperClass(ISourceModule module,
+			Pattern classNamePattern) {
+		Assert.isNotNull(module);
+		Assert.isNotNull(classNamePattern);
+		try {
+			IType[] types = module.getAllTypes();
+			if (types.length > 0) {
+				String[] classes = getClassType(types).getSuperClasses();
+				for (String c : classes) {
+					if (c.indexOf('\\') >= 0)
+						c = c.substring(c.lastIndexOf('\\') + 1);
+
+					if (classNamePattern.matcher(c).matches()) {
+						return true;
+					} else {
+						SearchMatch[] matches = PHPSearchEngine.findClass(c,
+								PHPSearchEngine.createProjectScope(module
+										.getScriptProject().getProject()));
+						for (SearchMatch match : matches) {
+							if (hasSuperClass(match.getResource(),
+									classNamePattern))
 								return true;
 						}
 					}
