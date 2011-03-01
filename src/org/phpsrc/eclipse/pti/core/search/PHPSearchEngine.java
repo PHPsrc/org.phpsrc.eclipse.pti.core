@@ -29,7 +29,8 @@ public class PHPSearchEngine {
 
 	public static IDLTKSearchScope createWorkspaceScope() {
 		DLTKSearchScopeFactory factory = DLTKSearchScopeFactory.getInstance();
-		return factory.createWorkspaceScope(false, PHPLanguageToolkit.getDefault());
+		return factory.createWorkspaceScope(false,
+				PHPLanguageToolkit.getDefault());
 	}
 
 	public static IDLTKSearchScope createProjectScope(IProject project) {
@@ -49,26 +50,32 @@ public class PHPSearchEngine {
 		return findClass(className, createWorkspaceScope(), matchRule);
 	}
 
-	public static SearchMatch[] findClass(String className, IDLTKSearchScope scope) {
+	public static SearchMatch[] findClass(String className,
+			IDLTKSearchScope scope) {
 		return findClass(className, scope, SearchPattern.R_EXACT_MATCH);
 	}
 
-	public static SearchMatch[] findClass(String className, IDLTKSearchScope scope, int matchRule) {
-		PatternQuerySpecification querySpec = new PatternQuerySpecification(className, IDLTKSearchConstants.TYPE,
-				false, IDLTKSearchConstants.DECLARATIONS, scope, "");
+	public static SearchMatch[] findClass(String className,
+			IDLTKSearchScope scope, int matchRule) {
+		PatternQuerySpecification querySpec = new PatternQuerySpecification(
+				className, IDLTKSearchConstants.TYPE, false,
+				IDLTKSearchConstants.DECLARATIONS, scope, "");
 
-		SearchPattern pattern = SearchPattern.createPattern(querySpec.getPattern(), querySpec.getSearchFor(), querySpec
-				.getLimitTo(), matchRule, scope.getLanguageToolkit());
+		SearchPattern pattern = SearchPattern.createPattern(
+				querySpec.getPattern(), querySpec.getSearchFor(),
+				querySpec.getLimitTo(), matchRule, scope.getLanguageToolkit());
 
 		return findMatches(pattern, scope);
 	}
 
-	private static SearchMatch[] findMatches(SearchPattern pattern, IDLTKSearchScope scope) {
+	private static SearchMatch[] findMatches(SearchPattern pattern,
+			IDLTKSearchScope scope) {
 		SearchEngine engine = new SearchEngine();
 		try {
 			PHPClassSearchRequestor requestor = new PHPClassSearchRequestor();
-			engine.search(pattern, new SearchParticipant[] { new DLTKSearchParticipant() }, scope, requestor,
-					new NullProgressMonitor());
+			engine.search(pattern,
+					new SearchParticipant[] { new DLTKSearchParticipant() },
+					scope, requestor, new NullProgressMonitor());
 
 			return requestor.getMatches();
 
