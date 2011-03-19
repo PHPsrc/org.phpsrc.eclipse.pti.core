@@ -11,7 +11,9 @@ package org.phpsrc.eclipse.pti.core.launching;
 public class OperatingSystem {
 	public static final boolean WINDOWS = java.io.File.separatorChar == '\\'; //$NON-NLS-1$
 	public static final boolean LINUX = java.io.File.separatorChar == '/'; //$NON-NLS-1$
-	public static final boolean MAC = System.getProperty("os.name").startsWith("Mac"); //$NON-NLS-1$
+	public static final boolean MAC = System
+			.getProperty("os.name").startsWith("Mac"); //$NON-NLS-1$
+	public static final char PLACEHOLDER_WHITESPACE = '§';
 
 	public static String escapeShellArg(String arg) {
 		if (WINDOWS) {
@@ -24,6 +26,15 @@ public class OperatingSystem {
 	}
 
 	public static String escapeShellFileArg(String fileName) {
-		return "\"" + fileName.replace("\"", "\\\"") + "\"";
+		if (WINDOWS)
+			return "\"" + fileName.replace("\"", "\\\"") + "\"";
+		else
+			return fileName.replace(' ', PLACEHOLDER_WHITESPACE);
+	}
+
+	public static String escapePHPFileArg(String fileName) {
+		if (WINDOWS)
+			return "\"" + fileName.replace("\"", "\\\"") + "\"";
+		return fileName;
 	}
 }

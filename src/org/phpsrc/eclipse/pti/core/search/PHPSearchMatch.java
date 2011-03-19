@@ -10,6 +10,7 @@ package org.phpsrc.eclipse.pti.core.search;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.dltk.internal.core.SourceType;
+import org.phpsrc.eclipse.pti.core.PHPToolkitUtil;
 
 public class PHPSearchMatch {
 	private SourceType element;
@@ -29,7 +30,8 @@ public class PHPSearchMatch {
 	}
 
 	public String toString() {
-		String name = element.getElementName();
+		String name = PHPToolkitUtil.getClassNameWithNamespace(element
+				.getSourceModule());
 		name += " - " + resource.getFullPath().toOSString();
 		return name;
 	}

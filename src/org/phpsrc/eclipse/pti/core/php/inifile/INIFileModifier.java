@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -28,8 +29,10 @@ import java.util.regex.Pattern;
 public class INIFileModifier {
 
 	private static final String GLOBAL_SECTION = "__global__"; //$NON-NLS-1$
-	private static final Pattern SECTION_PATTERN = Pattern.compile("\\[([^\\]]+)\\]"); //$NON-NLS-1$
-	private static final Pattern NAME_VAL_PATTERN = Pattern.compile("([\\w]+)\\s*=\\s*(.*)"); //$NON-NLS-1$
+	private static final Pattern SECTION_PATTERN = Pattern
+			.compile("\\[([^\\]]+)\\]"); //$NON-NLS-1$
+	private static final Pattern NAME_VAL_PATTERN = Pattern
+			.compile("([\\w]+)\\s*=\\s*(.*)"); //$NON-NLS-1$
 
 	class INIFileSection {
 		String name;
@@ -133,22 +136,32 @@ public class INIFileModifier {
 	 *            <code>null</code> - every entry that matches the given name
 	 *            will be replaced
 	 */
-	public void addEntry(String sectionName, String name, String value, boolean replace, String replacePattern) {
+	public void addEntry(String sectionName, String name, String value,
+			boolean replace, String replacePattern) {
 		if (sectionName == null || name == null || value == null) {
 			throw new NullPointerException();
 		}
+
+		if (replace) {
+			removeEntry(sectionName, name, replacePattern);
+		}
+
 		for (INIFileSection section : sections) {
 			if (section.name.equals(sectionName)) {
 				if (replace) {
 					boolean replaced = false;
 
 					for (int i = 0; i < section.lines.size(); ++i) {
-						Matcher m = NAME_VAL_PATTERN.matcher(section.lines.get(i));
+						Matcher m = NAME_VAL_PATTERN.matcher(section.lines
+								.get(i));
 						if (m.matches()) {
 							String oldName = m.group(1);
 							String oldValue = m.group(2);
-							if (oldName.equals(name) && (replacePattern == null || oldValue.matches(replacePattern))) {
-								section.lines.set(i, name + '=' + quoteString(value));
+							if (oldName.equals(name)
+									&& (replacePattern == null || oldValue
+											.matches(replacePattern))) {
+								section.lines.set(i, name + '='
+										+ quoteString(value));
 								replaced = true;
 								break;
 							}
@@ -180,7 +193,8 @@ public class INIFileModifier {
 	 * @return result string
 	 */
 	private String quoteString(String str) {
-		if (str.startsWith("\"") && str.endsWith("\"") || str.startsWith("'") && str.endsWith("'")) {
+		if (str.startsWith("\"") && str.endsWith("\"") || str.startsWith("'")
+				&& str.endsWith("'")) {
 			return str;
 		}
 		return '"' + str + '"';
@@ -194,7 +208,8 @@ public class INIFileModifier {
 	 * @return result string
 	 */
 	private String removeQuotes(String str) {
-		if (str.startsWith("\"") && str.endsWith("\"") || str.startsWith("'") && str.endsWith("'")) {
+		if (str.startsWith("\"") && str.endsWith("\"") || str.startsWith("'")
+				&& str.endsWith("'")) {
 			return str.substring(1, str.length() - 1);
 		}
 		return str;
@@ -261,26 +276,24 @@ public class INIFileModifier {
 	 *            entry that matches the given name will be removed.
 	 * @return <code>true</code> if some entry was removed, otherwise - false
 	 */
-	public boolean removeEntry(String sectionName, String name, String removePattern) {
+	public boolean removeEntry(String sectionName, String name,
+			String removePattern) {
 		if (name == null) {
 			throw new NullPointerException();
 		}
 		boolean removed = false;
 		for (INIFileSection section : sections) {
-			if (sectionName == null || section.name.equals(sectionName)) {
-				for (int i = 0; i < section.lines.size(); ++i) {
-					Matcher m = NAME_VAL_PATTERN.matcher(section.lines.get(i));
-					if (m.matches()) {
-						String oldName = m.group(1);
-						String oldValue = m.group(2);
-						if (oldName.equals(name) && (removePattern == null || oldValue.matches(removePattern))) {
-							section.lines.remove(i--);
-							removed = true;
-						}
+			for (int i = 0; i < section.lines.size(); ++i) {
+				Matcher m = NAME_VAL_PATTERN.matcher(section.lines.get(i));
+				if (m.matches()) {
+					String oldName = m.group(1);
+					String oldValue = m.group(2);
+					if (oldName.equals(name)
+							&& (removePattern == null || oldValue
+									.matches(removePattern))) {
+						section.lines.remove(i--);
+						removed = true;
 					}
-				}
-				if (sectionName != null) {
-					break;
 				}
 			}
 		}
@@ -332,7 +345,8 @@ public class INIFileModifier {
 	 *            it. If <code>commentPattern</code> is <code>null</code> every
 	 *            entry that matches the given name will be commented.
 	 */
-	public void commentEntry(String sectionName, String name, String commentPattern) {
+	public void commentEntry(String sectionName, String name,
+			String commentPattern) {
 		if (name == null) {
 			throw new NullPointerException();
 		}
@@ -344,8 +358,10 @@ public class INIFileModifier {
 					if (m.matches()) {
 						String oldName = m.group(1);
 						String oldValue = m.group(2);
-						if (!line.startsWith(";") && oldName.equals(name)
-								&& (commentPattern == null || oldValue.matches(commentPattern))) {
+						if (!line.startsWith(";")
+								&& oldName.equals(name)
+								&& (commentPattern == null || oldValue
+										.matches(commentPattern))) {
 							section.lines.set(i, ';' + line);
 						}
 					}
@@ -378,12 +394,20 @@ public class INIFileModifier {
 		sections.add(currentSection);
 		while ((line = r.readLine()) != null) {
 			line = line.trim();
-			Matcher m = SECTION_PATTERN.matcher(line);
-			if (m.matches()) {
-				String sectionName = m.group(1);
+			Matcher sm = SECTION_PATTERN.matcher(line);
+			if (sm.matches()) {
+				String sectionName = sm.group(1);
 				currentSection = new INIFileSection(sectionName);
 				sections.add(currentSection);
 			} else {
+				Matcher nvm = NAME_VAL_PATTERN.matcher(line);
+				// check only for double "include_path" (double include_path
+				// problem) since other attributes like "extension" are allowed
+				// more then once.
+				if (nvm.matches() && "include_path".equals(nvm.group(1))) {
+					removeEntry(nvm.group(1), null);
+				}
+
 				currentSection.lines.add(line);
 			}
 		}
@@ -437,23 +461,64 @@ public class INIFileModifier {
 		}
 
 		for (INIFileSection section : sections) {
-			if (sectionName == null || section.name.equals(sectionName)) {
-				for (int i = 0; i < section.lines.size(); ++i) {
-					Matcher m = NAME_VAL_PATTERN.matcher(section.lines.get(i));
-					if (m.matches()) {
-						String oldName = m.group(1);
-						String oldValue = m.group(2);
-						if (oldName.equals(name)) {
-							return removeQuotes(oldValue);
-						}
+			for (int i = 0; i < section.lines.size(); ++i) {
+				Matcher m = NAME_VAL_PATTERN.matcher(section.lines.get(i));
+				if (m.matches()) {
+					String oldName = m.group(1);
+					String oldValue = m.group(2);
+					if (oldName.equals(name)) {
+						return removeQuotes(oldValue);
 					}
-				}
-				if (sectionName != null) {
-					break;
 				}
 			}
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get all entries from the INI file from the global section.
+	 * 
+	 * @param name
+	 *            Entry name
+	 * @param removePattern
+	 *            Pattern to check against existing entry value, before removing
+	 *            it. If <code>removePattern</code> is <code>null</code> every
+	 *            entry that matches the given name will be removed.
+	 * @return <code>true</code> if some entry was removed, otherwise - false
+	 */
+	public String[] getEntries(String name) {
+		return getEntries(GLOBAL_SECTION, name);
+	}
+
+	/**
+	 * Get all entries from the INI file.
+	 * 
+	 * @param sectionName
+	 *            Section name
+	 * @param name
+	 *            Entry name
+	 */
+	public String[] getEntries(String sectionName, String name) {
+		if (name == null) {
+			throw new NullPointerException();
+		}
+
+		List<String> entries = new ArrayList<String>();
+
+		for (INIFileSection section : sections) {
+			for (int i = 0; i < section.lines.size(); ++i) {
+				Matcher m = NAME_VAL_PATTERN.matcher(section.lines.get(i));
+				if (m.matches()) {
+					String oldName = m.group(1);
+					String oldValue = m.group(2);
+					if (oldName.equals(name)) {
+						entries.add(removeQuotes(oldValue));
+					}
+				}
+			}
+		}
+
+		return entries.toArray(new String[0]);
 	}
 }

@@ -45,7 +45,9 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.phpsrc.eclipse.pti.core.IPHPCoreConstants;
 import org.phpsrc.eclipse.pti.ui.Logger;
 
-public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigurationBlock {
+@SuppressWarnings("restriction")
+public abstract class AbstractPHPToolConfigurationBlock extends
+		OptionsConfigurationBlock {
 
 	private static final String PHP_EXE_PAGE_ID = "org.eclipse.php.debug.ui.preferencesphps.PHPsPreferencePage"; //$NON-NLS-1$
 
@@ -53,10 +55,13 @@ public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigura
 	protected Combo phpExecutableCombo;
 
 	protected Button debugPrintOutputCheckbox;
+	protected IStatusChangeListener changeListener;
 
-	public AbstractPHPToolConfigurationBlock(IStatusChangeListener context, IProject project, Key[] allKeys,
+	public AbstractPHPToolConfigurationBlock(IStatusChangeListener context,
+			IProject project, Key[] allKeys,
 			IWorkbenchPreferenceContainer container) {
 		super(context, project, allKeys, container);
+		changeListener = context;
 	}
 
 	public Control createContents(Composite parent) {
@@ -111,13 +116,15 @@ public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigura
 			public void pageChanged(PageChangedEvent event) {
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						phpExecutableCombo.setItems(preparePHPExecutableEntryList());
+						phpExecutableCombo
+								.setItems(preparePHPExecutableEntryList());
 					}
 				});
 			}
 		};
 
-		addLink(composite, "<a>PHP Executables...</a>", PHP_EXE_PAGE_ID, listener);
+		addLink(composite, "<a>PHP Executables...</a>", PHP_EXE_PAGE_ID,
+				listener);
 
 		return composite;
 	}
@@ -133,7 +140,8 @@ public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigura
 
 		debugPrintOutputCheckbox = new Button(composite, SWT.CHECK);
 		debugPrintOutputCheckbox.setText("print PHP output to console");
-		debugPrintOutputCheckbox.setSelection(getBooleanValue(getDebugPrintOutputKey()));
+		debugPrintOutputCheckbox
+				.setSelection(getBooleanValue(getDebugPrintOutputKey()));
 		debugPrintOutputCheckbox.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selection = debugPrintOutputCheckbox.getSelection();
@@ -193,12 +201,13 @@ public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigura
 		return null;
 	}
 
-	protected Link addLink(Composite parent, String label, final String propertyPageID) {
+	protected Link addLink(Composite parent, String label,
+			final String propertyPageID) {
 		return addLink(parent, label, propertyPageID, null);
 	}
 
-	protected Link addLink(Composite parent, String label, final String propertyPageID,
-			final IPageChangedListener listener) {
+	protected Link addLink(Composite parent, String label,
+			final String propertyPageID, final IPageChangedListener listener) {
 		Link link = new Link(parent, SWT.NONE);
 		link.setFont(parent.getFont());
 		link.setLayoutData(new GridData(SWT.END, SWT.BEGINNING, true, false));
@@ -206,8 +215,9 @@ public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigura
 		link.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
-				PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(), propertyPageID, null,
-						null);
+				PreferenceDialog dialog = PreferencesUtil
+						.createPreferenceDialogOn(getShell(), propertyPageID,
+								null, null);
 				dialog.setBlockOnOpen(true);
 				if (listener != null) {
 					dialog.addPageChangedListener(listener);
@@ -234,7 +244,8 @@ public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigura
 		for (IProject project : projects) {
 			if (project.isOpen()) {
 				try {
-					IProjectNature nature = project.getNature(IPHPCoreConstants.PHPNatureID);
+					IProjectNature nature = project
+							.getNature(IPHPCoreConstants.PHPNatureID);
 					if (nature != null) {
 						project.setSessionProperty(propertyName, null);
 					}
@@ -245,8 +256,8 @@ public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigura
 		}
 	}
 
-	protected Group createDialogFieldsWithInfoText(Composite folder, DialogField[] fields, String groupText,
-			String[] infoTexts) {
+	protected Group createDialogFieldsWithInfoText(Composite folder,
+			DialogField[] fields, String groupText, String[] infoTexts) {
 		GridLayout fieldLayout = new GridLayout();
 		fieldLayout.marginHeight = 5;
 		fieldLayout.marginWidth = 0;
@@ -262,7 +273,8 @@ public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigura
 		for (int i = 0; i < fields.length; i++) {
 			fields[i].doFillIntoGrid(fieldGroup, 3);
 
-			if (infoTexts != null && infoTexts.length > i && infoTexts[i] != null && !"".equals(infoTexts[i])) {
+			if (infoTexts != null && infoTexts.length > i
+					&& infoTexts[i] != null && !"".equals(infoTexts[i])) {
 				Label ignorePatternInfoLabel = new Label(fieldGroup, SWT.NULL);
 				ignorePatternInfoLabel.setText(infoTexts[i]);
 				GridData infoData = new GridData(GridData.FILL_HORIZONTAL);
@@ -275,8 +287,9 @@ public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigura
 		return fieldGroup;
 	}
 
-	protected void createDialogFieldWithInfoLink(Composite folder, DialogField field, String groupText,
-			String infoText, String propertyPageID) {
+	protected void createDialogFieldWithInfoLink(Composite folder,
+			DialogField field, String groupText, String infoText,
+			String propertyPageID) {
 		GridLayout fieldLayout = new GridLayout();
 		fieldLayout.marginHeight = 5;
 		fieldLayout.marginWidth = 0;
@@ -305,11 +318,25 @@ public abstract class AbstractPHPToolConfigurationBlock extends OptionsConfigura
 		unpackPrefValue(field, key, null);
 	}
 
-	protected void unpackPrefValue(StringDialogField field, Key key, String defaultValue) {
+	protected void unpackPrefValue(StringDialogField field, Key key,
+			String defaultValue) {
 		String value = getValue(key);
 		if (value != null)
 			field.setText(value);
 		else if (defaultValue != null)
 			field.setText(defaultValue);
+	}
+
+	protected IStatusChangeListener getStatusChangeListener() {
+		return changeListener;
+	}
+
+	protected void addInfoLabel(Composite parent, String infoText, int span) {
+		Label infoLabel = new Label(parent, SWT.NONE);
+		infoLabel.setText(infoText);
+		GridData folderInfoData = new GridData(GridData.FILL_HORIZONTAL);
+		folderInfoData.horizontalSpan = span;
+		infoLabel.setLayoutData(folderInfoData);
+		makeFontItalic(infoLabel);
 	}
 }
