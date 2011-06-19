@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.dltk.internal.core.SourceType;
 import org.phpsrc.eclipse.pti.core.PHPToolkitUtil;
 
+@SuppressWarnings("restriction")
 public class PHPSearchMatch {
 	private SourceType element;
 	private IResource resource;
