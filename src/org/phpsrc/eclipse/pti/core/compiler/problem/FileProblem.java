@@ -9,7 +9,6 @@
 package org.phpsrc.eclipse.pti.core.compiler.problem;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.dltk.compiler.problem.DefaultProblem;
 import org.eclipse.dltk.compiler.problem.IProblemIdentifier;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 
@@ -17,17 +16,22 @@ public class FileProblem extends DefaultProblem {
 
 	protected IFile originatingFile;
 
-	public FileProblem(IFile originatingFile, String message, IProblemIdentifier id, String[] stringArguments, ProblemSeverity severity,
-			int startPosition, int endPosition, int line, int column) {
-		super(originatingFile.getFullPath().toOSString(), message, id, stringArguments, severity, startPosition,
-				endPosition, line, column);
+	public FileProblem(IFile originatingFile, String message,
+			IProblemIdentifier id, String[] stringArguments,
+			ProblemSeverity severity, int startPosition, int endPosition,
+			int line, int column) {
+		super(originatingFile.getFullPath().toOSString(), message, id,
+				stringArguments, severity, startPosition, endPosition, line,
+				column);
 		this.originatingFile = originatingFile;
 	}
 
-	public FileProblem(IFile originatingFile, String message, IProblemIdentifier id, String[] stringArguments, ProblemSeverity severity,
-			int startPosition, int endPosition, int line) {
-		this(originatingFile, message, id, stringArguments, severity, startPosition,
-				endPosition, line, 0);
+	public FileProblem(IFile originatingFile, String message,
+			IProblemIdentifier id, String[] stringArguments,
+			ProblemSeverity severity, int startPosition, int endPosition,
+			int line) {
+		this(originatingFile, message, id, stringArguments, severity,
+				startPosition, endPosition, line, 0);
 	}
 
 	public void setOriginatingFile(IFile originatingFile) {
