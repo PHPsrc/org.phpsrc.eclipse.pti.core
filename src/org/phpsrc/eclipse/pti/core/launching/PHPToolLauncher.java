@@ -11,6 +11,7 @@ package org.phpsrc.eclipse.pti.core.launching;
 import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.TimeZone;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -326,9 +327,15 @@ public class PHPToolLauncher {
 		else
 			tmpPHPINIFile = PHPINIUtil.createTemporaryPHPINIFile();
 
-		if (fileEntries != null && fileEntries.length > 0) {
-			try {
-				INIFileModifier modifier = new INIFileModifier(tmpPHPINIFile);
+		try {
+			INIFileModifier modifier = new INIFileModifier(tmpPHPINIFile);
+
+			// Since PHP 5.3 you are *required* to use the date.timezone setting
+			// or the date_default_timezone_set() function.
+			modifier.addEntry("Date", "date.timezone", TimeZone.getDefault()
+					.getID());
+
+			if (fileEntries != null && fileEntries.length > 0) {
 				for (INIFileEntry entry : fileEntries) {
 					String newValue = entry.getValue();
 					if (entry.isAdditional()) {
@@ -341,10 +348,11 @@ public class PHPToolLauncher {
 					modifier.addEntry(entry.getSection(), entry.getName(),
 							newValue, true, null);
 				}
-				modifier.close();
-			} catch (IOException e) {
-				Logger.logException(e);
 			}
+
+			modifier.close();
+		} catch (IOException e) {
+			Logger.logException(e);
 		}
 
 		return tmpPHPINIFile;
