@@ -398,21 +398,27 @@ public class PHPToolkitUtil {
 		Assert.isNotNull(className);
 		try {
 			IType[] types = module.getAllTypes();
-			if (types.length > 0) {
-				String[] classes = getClassType(types).getSuperClasses();
-				for (String c : classes) {
-					if (c.indexOf('\\') >= 0)
-						c = c.substring(c.lastIndexOf('\\') + 1);
+			if (types != null && types.length > 0) {
+				IType classType = getClassType(types);
+				if (classType != null) {
+					String[] classes = classType.getSuperClasses();
+					for (String c : classes) {
+						if (c.indexOf('\\') >= 0)
+							c = c.substring(c.lastIndexOf('\\') + 1);
 
-					if (c.equals(className)) {
-						return true;
-					} else {
-						SearchMatch[] matches = PHPSearchEngine.findClass(c,
-								PHPSearchEngine.createProjectScope(module
-										.getScriptProject().getProject()));
-						for (SearchMatch match : matches) {
-							if (hasSuperClass(match.getResource(), className))
-								return true;
+						if (c.equals(className)) {
+							return true;
+						} else {
+							SearchMatch[] matches = PHPSearchEngine.findClass(
+									c, PHPSearchEngine
+											.createProjectScope(module
+													.getScriptProject()
+													.getProject()));
+							for (SearchMatch match : matches) {
+								if (hasSuperClass(match.getResource(),
+										className))
+									return true;
+							}
 						}
 					}
 				}
@@ -440,21 +446,26 @@ public class PHPToolkitUtil {
 		try {
 			IType[] types = module.getAllTypes();
 			if (types.length > 0) {
-				String[] classes = getClassType(types).getSuperClasses();
-				for (String c : classes) {
-					if (c.indexOf('\\') >= 0)
-						c = c.substring(c.lastIndexOf('\\') + 1);
+				IType classType = getClassType(types);
+				if (classType != null) {
+					String[] classes = classType.getSuperClasses();
+					for (String c : classes) {
+						if (c.indexOf('\\') >= 0)
+							c = c.substring(c.lastIndexOf('\\') + 1);
 
-					if (classNamePattern.matcher(c).matches()) {
-						return true;
-					} else {
-						SearchMatch[] matches = PHPSearchEngine.findClass(c,
-								PHPSearchEngine.createProjectScope(module
-										.getScriptProject().getProject()));
-						for (SearchMatch match : matches) {
-							if (hasSuperClass(match.getResource(),
-									classNamePattern))
-								return true;
+						if (classNamePattern.matcher(c).matches()) {
+							return true;
+						} else {
+							SearchMatch[] matches = PHPSearchEngine.findClass(
+									c, PHPSearchEngine
+											.createProjectScope(module
+													.getScriptProject()
+													.getProject()));
+							for (SearchMatch match : matches) {
+								if (hasSuperClass(match.getResource(),
+										classNamePattern))
+									return true;
+							}
 						}
 					}
 				}
