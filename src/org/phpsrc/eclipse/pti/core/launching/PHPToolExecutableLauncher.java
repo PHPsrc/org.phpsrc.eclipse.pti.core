@@ -34,6 +34,7 @@ import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.php.debug.core.debugger.parameters.IDebugParametersKeys;
+import org.eclipse.php.internal.core.PHPVersion;
 import org.eclipse.php.internal.debug.core.IPHPDebugConstants;
 import org.eclipse.php.internal.debug.core.PHPDebugCoreMessages;
 import org.eclipse.php.internal.debug.core.launching.PHPLaunch;
@@ -110,10 +111,11 @@ public class PHPToolExecutableLauncher {
 		String[] args = PHPLaunchUtilities.getProgramArguments(launch
 				.getLaunchConfiguration());
 
+		//PHPVersion currently is hardcoded
 		String[] cmdLine = PHPLaunchUtilities.getCommandLine(
 				launch.getLaunchConfiguration(),
 				OperatingSystem.escapePHPFileArg(phpExeString), phpConfigDir,
-				OperatingSystem.escapeShellFileArg(fileName), args);
+				OperatingSystem.escapeShellFileArg(fileName), args, "php5");
 
 		// remove unwanted -n argument
 		ArrayList<String> newCmdLineList = new ArrayList<String>(cmdLine.length);
