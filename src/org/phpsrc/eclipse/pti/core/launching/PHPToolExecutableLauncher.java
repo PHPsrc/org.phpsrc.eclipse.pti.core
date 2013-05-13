@@ -34,11 +34,14 @@ import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.php.debug.core.debugger.parameters.IDebugParametersKeys;
+import org.eclipse.php.internal.core.PHPVersion;
 import org.eclipse.php.internal.debug.core.IPHPDebugConstants;
 import org.eclipse.php.internal.debug.core.PHPDebugCoreMessages;
 import org.eclipse.php.internal.debug.core.launching.PHPLaunch;
 import org.eclipse.php.internal.debug.core.launching.PHPLaunchUtilities;
 import org.eclipse.php.internal.debug.core.phpIni.PHPINIUtil;
+import org.eclipse.php.internal.debug.core.preferences.PHPexeItem;
+import org.eclipse.php.internal.debug.core.preferences.PHPexes;
 import org.eclipse.swt.widgets.Display;
 import org.phpsrc.eclipse.pti.core.PHPToolCorePlugin;
 import org.phpsrc.eclipse.pti.core.listener.IOutputListener;
@@ -110,10 +113,19 @@ public class PHPToolExecutableLauncher {
 		String[] args = PHPLaunchUtilities.getProgramArguments(launch
 				.getLaunchConfiguration());
 
-		String[] cmdLine = PHPLaunchUtilities.getCommandLine(
-				launch.getLaunchConfiguration(),
-				OperatingSystem.escapePHPFileArg(phpExeString), phpConfigDir,
-				OperatingSystem.escapeShellFileArg(fileName), args);
+		String phpV = null;
+	    PHPexeItem[] items = PHPexes.getInstance().getAllItems();
+	    for (PHPexeItem item : items) {
+	        if (item.getExecutable().equals(phpExeFile)) {
+	            phpV = item.getVersion();
+	            break;
+	        }
+	    }
+
+	    String[] cmdLine = PHPLaunchUtilities.getCommandLine(
+	            launch.getLaunchConfiguration(),
+	            OperatingSystem.escapePHPFileArg(phpExeString), phpConfigDir,
+	            OperatingSystem.escapeShellFileArg(fileName), args, phpV);
 
 		// remove unwanted -n argument
 		ArrayList<String> newCmdLineList = new ArrayList<String>(cmdLine.length);
