@@ -43,7 +43,7 @@ public class PHPSourceFile implements ISourceFile {
 		lineStartTabCount = new ArrayList<Integer>();
 
 		InputStreamReader isr;
-		isr = new InputStreamReader(file.getContents());
+		isr = new InputStreamReader(file.getContents(), ResourcesPlugin.getEncoding());
 
 		int last = -1;
 		int i = 0;
