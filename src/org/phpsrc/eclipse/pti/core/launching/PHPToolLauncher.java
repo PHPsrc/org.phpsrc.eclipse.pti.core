@@ -33,7 +33,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.php.debug.core.debugger.parameters.IDebugParametersKeys;
 import org.eclipse.php.internal.debug.core.IPHPDebugConstants;
-import org.eclipse.php.internal.debug.core.debugger.AbstractDebuggerConfiguration;
+import org.eclipse.php.internal.debug.core.debugger.IDebuggerConfiguration;
 import org.eclipse.php.internal.debug.core.phpIni.PHPINIUtil;
 import org.eclipse.php.internal.debug.core.preferences.PHPDebugCorePreferenceNames;
 import org.eclipse.php.internal.debug.core.preferences.PHPDebuggersRegistry;
@@ -372,7 +372,7 @@ public class PHPToolLauncher {
 		// Set the delegate class according to selected executable.
 		wc.setAttribute(PHPDebugCorePreferenceNames.PHP_DEBUGGER_ID,
 				defaultEXE.getDebuggerID());
-		AbstractDebuggerConfiguration debuggerConfiguration = PHPDebuggersRegistry
+		IDebuggerConfiguration debuggerConfiguration = PHPDebuggersRegistry
 				.getDebuggerConfiguration(defaultEXE.getDebuggerID());
 		wc.setAttribute(
 				PHPDebugCorePreferenceNames.CONFIGURATION_DELEGATE_CLASS,
